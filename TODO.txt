@@ -1,0 +1,5 @@
+- Move common to an external library.
+- Move core and common into their own folder.
+- Move example into its own folder.
+- K8 setup.
+- Add gradle cache to docker build.
