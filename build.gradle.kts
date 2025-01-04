@@ -28,6 +28,12 @@ subprojects {
         }
     }
 
+    if (name != "core") {
+        tasks.getByName("bootJar") {
+            enabled = false
+        }
+    }
+
     dependencies {
         implementation("org.springframework.boot:spring-boot-starter")
         implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -45,4 +51,5 @@ subprojects {
     tasks.withType<Test> {
         useJUnitPlatform()
     }
+
 }
