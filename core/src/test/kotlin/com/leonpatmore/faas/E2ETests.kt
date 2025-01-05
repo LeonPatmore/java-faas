@@ -19,6 +19,7 @@ import org.springframework.test.context.ContextConfiguration
 class E2ETests {
     @Autowired
     private lateinit var eventSource: TestEventSource
+
     @Test
     fun name() {
         eventSource.produce() shouldBe "res"
@@ -26,7 +27,7 @@ class E2ETests {
 }
 
 class TestEventSource(private val handler: Handler<*>) {
-    fun produce() : Any {
+    fun produce(): Any {
         val typedHandler = handler as Handler<String>
         val res = typedHandler.handle(Message("test message"))
         return res.body
@@ -34,7 +35,10 @@ class TestEventSource(private val handler: Handler<*>) {
 }
 
 class TestEventSourceFactory : HandlerEventSourceFactory {
-    override fun wrapHandler(handler: Handler<*>, context: GenericApplicationContext) {
+    override fun wrapHandler(
+        handler: Handler<*>,
+        context: GenericApplicationContext,
+    ) {
         val testEventSource = TestEventSource(handler)
         context.registerBean {
             testEventSource
@@ -53,6 +57,7 @@ class TestHandler : NamedHandler<String>("Test handler") {
 class TestConfig {
     @Bean
     fun testHandler() = TestHandler()
+
     @Bean
     fun testEventSourceFactory() = TestEventSourceFactory()
 }
