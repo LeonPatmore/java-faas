@@ -3,3 +3,4 @@
 - Move example into its own folder.
 - K8 setup.
 - Add gradle cache to docker build.
+- Add linting.

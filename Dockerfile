@@ -18,4 +18,4 @@ WORKDIR /app
 COPY --from=build /app/core/build/libs/*.jar core.jar
 
 EXPOSE 8080
-ENTRYPOINT ["java", "-Dloader.path=/app/handler.jar", "-cp", "/app/core.jar", "org.springframework.boot.loader.launch.PropertiesLauncher"]
+ENTRYPOINT ["java", "-Dloader.path=/app/handler,/app/libs", "-cp", "/app/core.jar", "org.springframework.boot.loader.launch.PropertiesLauncher"]

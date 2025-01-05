@@ -1,2 +1,2 @@
 rootProject.name = "java-faas"
-include("core", "common", "example")
+include("core", "common", "example", "web")
