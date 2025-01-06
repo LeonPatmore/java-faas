@@ -5,3 +5,11 @@
 
 ./jar tf 'C:\Users\Leon-\Documents\GitHub\java-faas\example\build\libs\example-0.0.1-SNAPSHOT-plain.jar'   
 ./jar tf 'C:\Users\Leon-\Documents\GitHub\java-faas\core\build\libs\core-0.0.1-SNAPSHOT.jar'
+
+
+``` 
+source:
+    factory: webEventSourceFactory
+    props:
+        path: /path
+```
