@@ -1,5 +1,6 @@
 plugins {
     java
+    `java-test-fixtures`
     kotlin("jvm") version "1.9.25"
     kotlin("plugin.spring") version "1.9.25" apply false
     id("org.springframework.boot") version "3.4.1" apply false

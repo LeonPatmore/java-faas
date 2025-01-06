@@ -1,8 +1,11 @@
 package com.leonpatmore.faas
 
+import com.leonpatmore.faas.common.TestHandler
+import com.leonpatmore.fass.common.EventTarget
 import com.leonpatmore.fass.common.Handler
+import com.leonpatmore.fass.common.HandlerEventSourceFactory
+import com.leonpatmore.fass.common.HandlerEventTargetFactory
 import com.leonpatmore.fass.common.Message
-import com.leonpatmore.fass.common.NamedHandler
 import com.leonpatmore.fass.common.Response
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
@@ -46,10 +49,15 @@ class TestEventSourceFactory : HandlerEventSourceFactory {
     }
 }
 
-class TestHandler : NamedHandler<String>("Test handler") {
-    override fun handle(msg: Message<String>): Response {
-        println("Handling " + msg.body)
-        return Response("res")
+class TestEventTarget : EventTarget {
+    override fun handle(res: Response) {
+        println("Event target for message ${res.body} reached")
+    }
+}
+
+class TestEventTargetFactory : HandlerEventTargetFactory {
+    override fun generateTarget(): EventTarget {
+        return TestEventTarget()
     }
 }
 
@@ -60,4 +68,7 @@ class TestConfig {
 
     @Bean
     fun testEventSourceFactory() = TestEventSourceFactory()
+
+    @Bean
+    fun testEventTargetFactory() = TestEventTargetFactory()
 }

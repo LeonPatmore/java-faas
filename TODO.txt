@@ -4,3 +4,4 @@
 - K8 setup.
 - Add gradle cache to docker build.
 - Add linting.
+- Add handler check, i.e. all handlers are assigned to at-least one event source.

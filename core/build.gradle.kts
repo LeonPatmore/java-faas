@@ -3,4 +3,5 @@ dependencies {
     implementation(project(":common"))
 
     testImplementation("io.kotest:kotest-assertions-core:5.9.1")
+    testImplementation(testFixtures(project(":common")))
 }

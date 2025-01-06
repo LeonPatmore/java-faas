@@ -1,7 +1,10 @@
 package com.leonpatmore.faas
 
+import com.leonpatmore.fass.common.EventTarget
 import com.leonpatmore.fass.common.Handler
+import com.leonpatmore.fass.common.HandlerEventTargetFactory
 import com.leonpatmore.fass.common.Message
+import com.leonpatmore.fass.common.Response
 import org.springframework.beans.factory.config.BeanPostProcessor
 import org.springframework.context.ApplicationContext
 import org.springframework.context.ApplicationContextAware
@@ -20,10 +23,12 @@ class HandlerBeanFactory : BeanPostProcessor, ApplicationContextAware {
     ): Any {
         if (bean is Handler<*>) {
             println("Post processing $beanName")
+            val factory = applicationContext.getBean("testEventTargetFactory", HandlerEventTargetFactory::class.java)
+            val target = factory.generateTarget()
             return Proxy.newProxyInstance(
                 applicationContext.classLoader,
                 arrayOf(Handler::class.java),
-                MyInvocationHandler(bean),
+                MyInvocationHandler(bean, listOf(target)),
             )
         }
         return bean
@@ -34,7 +39,10 @@ class HandlerBeanFactory : BeanPostProcessor, ApplicationContextAware {
     }
 }
 
-internal class MyInvocationHandler<T>(private val handler: Handler<T>) : InvocationHandler {
+internal class MyInvocationHandler<T>(
+    private val handler: Handler<T>,
+    private val targets: List<EventTarget>,
+) : InvocationHandler {
     @Throws(Throwable::class)
     override fun invoke(
         proxy: Any?,
@@ -43,8 +51,9 @@ internal class MyInvocationHandler<T>(private val handler: Handler<T>) : Invocat
     ): Any? {
         println("Before method: " + method.getName())
         val message = args[0] as Message<T>
-        val res = method.invoke(handler, message)
+        val res = method.invoke(handler, message) as Response
         println("After method: " + method.getName())
+        targets.forEach { it.handle(res) }
         return res
     }
 }

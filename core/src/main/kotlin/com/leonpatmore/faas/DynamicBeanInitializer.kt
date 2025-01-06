@@ -1,6 +1,7 @@
 package com.leonpatmore.faas
 
 import com.leonpatmore.fass.common.Handler
+import com.leonpatmore.fass.common.HandlerEventSourceFactory
 import org.springframework.context.ApplicationListener
 import org.springframework.context.event.ContextRefreshedEvent
 import org.springframework.context.support.GenericApplicationContext
