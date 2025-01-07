@@ -13,4 +13,6 @@ class TestHandler : NamedHandler<String>("Test handler") {
     companion object {
         const val RESPONSE_STRING = "res"
     }
+
+    override fun getMessageType(): Class<String> = String::class.java
 }

@@ -1,5 +1,6 @@
 package com.leonpatmore.faas.web
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.leonpatmore.fass.common.EVENT_SOURCE_ENABLED_PROPERTY_PREFIX
 import com.leonpatmore.fass.common.Handler
 import com.leonpatmore.fass.common.HandlerEventSourceFactory
@@ -15,6 +16,7 @@ import java.lang.reflect.Method
 @ConditionalOnProperty(EVENT_SOURCE_ENABLED_PROPERTY_PREFIX + "web.enabled")
 class WebEventSourceFactory(
     private val handlerMapping: RequestMappingHandlerMapping,
+    private val objectMapper: ObjectMapper,
 ) : HandlerEventSourceFactory<WebProperties> {
     override fun wrapHandler(
         handler: Handler<*>,
@@ -22,8 +24,8 @@ class WebEventSourceFactory(
         properties: WebProperties,
     ) {
         val mappingInfo = RequestMappingInfo.paths(properties.path).methods(RequestMethod.POST).build()
-        val method: Method = SimpleWebHandler::class.java.getMethod("handle", String::class.java)
-        val simpleWebHandler = SimpleWebHandler(handler)
+        val method: Method = SimpleWebHandler::class.java.methods.first { it.name == "handle" }
+        val simpleWebHandler = SimpleWebHandler(handler, objectMapper)
         handlerMapping.registerMapping(mappingInfo, simpleWebHandler, method)
     }
 
