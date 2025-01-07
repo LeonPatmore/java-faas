@@ -1,5 +1,6 @@
 package com.leonpatmore.faas.source
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.leonpatmore.faas.CoreProperties
 import com.leonpatmore.faas.FunctionSourceProperties
 import com.leonpatmore.faas.RootFunctionProperties
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Component
 class FunctionEventSourceListener(
     val properties: CoreProperties,
     val validators: List<HandlersPropertiesValidator>,
+    val objectMapper: ObjectMapper,
 ) : ApplicationListener<ContextRefreshedEvent> {
     override fun onApplicationEvent(event: ContextRefreshedEvent) {
         val context = event.applicationContext as GenericApplicationContext
@@ -26,7 +28,7 @@ class FunctionEventSourceListener(
         val factories = context.getBeansOfType(HandlerEventSourceFactory::class.java)
 
         validators.forEach {
-            val valid = it.validate(handlers, properties)
+            val valid = it.validate(handlers, properties, factories)
             if (!valid) {
                 exit("Failed to validate functions: ${it.reason}", context)
             }
@@ -41,9 +43,19 @@ class FunctionEventSourceListener(
         functionConfigs.forEach { (functionName, props) ->
             LOGGER.info("Setting up event source for function {}", functionName)
             val factory = factories.getEventSourceFactory(props.second?.source, context)
-
-            factory.wrapHandler(props.first!!, context)
+            doSomething(factory, props.first!!, props.second, context)
         }
+    }
+
+    fun <T> doSomething(
+        factory: HandlerEventSourceFactory<T>,
+        handler: Handler<*>,
+        functionProps: RootFunctionProperties?,
+        context: GenericApplicationContext,
+    ) {
+        val sourceProps = objectMapper.convertValue(functionProps?.source?.props ?: emptyMap<String, Any>(), factory.getPropertyClass())
+        LOGGER.info("Using source properties [ $sourceProps ]")
+        factory.wrapHandler(handler, context, sourceProps)
     }
 
     companion object {
@@ -51,13 +63,13 @@ class FunctionEventSourceListener(
     }
 }
 
-fun Map<String, HandlerEventSourceFactory>.getEventSourceFactory(
+fun Map<String, HandlerEventSourceFactory<*>>.getEventSourceFactory(
     props: FunctionSourceProperties?,
     context: ApplicationContext,
-): HandlerEventSourceFactory {
+): HandlerEventSourceFactory<*> {
     if (props?.factory == null) {
         if (size != 1) {
-            exit("More than one event source factory detected, you need to specify which one to use", context)
+            exit("More than one event source factory detected, you need to specify which one to use. The factories are [ $keys ]", context)
         } else {
             return values.single()
         }
@@ -73,5 +85,6 @@ abstract class HandlersPropertiesValidator(val reason: String) {
     abstract fun validate(
         handlers: Map<String, Handler<*>>,
         properties: CoreProperties,
+        factories: Map<String, HandlerEventSourceFactory<*>>,
     ): Boolean
 }

@@ -16,7 +16,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@SpringBootTest(properties = ["web.path=/path"], classes = [TestConfig::class])
+@SpringBootTest(properties = ["event.source.web.enabled=true"], classes = [TestConfig::class])
 @AutoConfigureMockMvc
 class E2ETests {
     @Autowired
@@ -33,9 +33,13 @@ class E2ETests {
 
     @Test
     fun name() {
-        webEventSourceFactory.wrapHandler(testHandler, applicationContext as GenericApplicationContext)
+        webEventSourceFactory.wrapHandler(
+            testHandler,
+            applicationContext as GenericApplicationContext,
+            WebProperties(),
+        )
 
-        mockMvc.perform(post("/path").content("hello"))
+        mockMvc.perform(post("/api").content("hello"))
             .andExpect(status().isOk)
             .andExpect(content().string(RESPONSE_STRING))
     }

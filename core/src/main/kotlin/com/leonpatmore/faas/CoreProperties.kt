@@ -9,7 +9,7 @@ open class RootFunctionProperties(
 
 class FunctionProperties(val handler: String, source: FunctionSourceProperties) : RootFunctionProperties(source)
 
-data class FunctionSourceProperties(val factory: String? = null, val sourceProps: Map<String, Any> = emptyMap())
+data class FunctionSourceProperties(val factory: String? = null, val props: Map<String, Any> = emptyMap())
 
 @ConfigurationProperties
 @Validated

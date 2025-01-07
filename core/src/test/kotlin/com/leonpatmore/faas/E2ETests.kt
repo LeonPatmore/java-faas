@@ -17,7 +17,7 @@ import org.springframework.context.support.GenericApplicationContext
 import org.springframework.context.support.registerBean
 import org.springframework.test.context.ContextConfiguration
 
-@SpringBootTest
+@SpringBootTest(properties = ["root.source.props.requiredProp=abc"])
 @ContextConfiguration(classes = [TestConfig::class])
 class E2ETests {
     @Autowired
@@ -37,16 +37,21 @@ class TestEventSource(private val handler: Handler<*>) {
     }
 }
 
-class TestEventSourceFactory : HandlerEventSourceFactory {
+data class TestEventSourceProperties(val requiredProp: String, val optional: String = "hello")
+
+class TestEventSourceFactory : HandlerEventSourceFactory<TestEventSourceProperties> {
     override fun wrapHandler(
         handler: Handler<*>,
         context: GenericApplicationContext,
+        properties: TestEventSourceProperties,
     ) {
         val testEventSource = TestEventSource(handler)
         context.registerBean {
             testEventSource
         }
     }
+
+    override fun getPropertyClass() = TestEventSourceProperties::class.java
 }
 
 class TestEventTarget : EventTarget {

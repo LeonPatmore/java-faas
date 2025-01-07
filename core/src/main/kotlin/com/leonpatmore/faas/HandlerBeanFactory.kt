@@ -2,7 +2,6 @@ package com.leonpatmore.faas
 
 import com.leonpatmore.fass.common.EventTarget
 import com.leonpatmore.fass.common.Handler
-import com.leonpatmore.fass.common.HandlerEventTargetFactory
 import com.leonpatmore.fass.common.Message
 import com.leonpatmore.fass.common.Response
 import org.springframework.beans.factory.config.BeanPostProcessor
@@ -11,7 +10,6 @@ import org.springframework.context.ApplicationContextAware
 import org.springframework.stereotype.Component
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
-import java.lang.reflect.Proxy
 
 @Component
 class HandlerBeanFactory : BeanPostProcessor, ApplicationContextAware {
@@ -22,14 +20,14 @@ class HandlerBeanFactory : BeanPostProcessor, ApplicationContextAware {
         beanName: String,
     ): Any {
         if (bean is Handler<*>) {
-            println("Post processing $beanName")
-            val factory = applicationContext.getBean("testEventTargetFactory", HandlerEventTargetFactory::class.java)
-            val target = factory.generateTarget()
-            return Proxy.newProxyInstance(
-                applicationContext.classLoader,
-                arrayOf(Handler::class.java),
-                MyInvocationHandler(bean, listOf(target)),
-            )
+//            println("Post processing $beanName")
+//            val factory = applicationContext.getBean("testEventTargetFactory", HandlerEventTargetFactory::class.java)
+//            val target = factory.generateTarget()
+//            return Proxy.newProxyInstance(
+//                applicationContext.classLoader,
+//                arrayOf(Handler::class.java),
+//                MyInvocationHandler(bean, listOf(target)),
+//            )
         }
         return bean
     }

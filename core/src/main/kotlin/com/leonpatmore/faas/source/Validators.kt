@@ -2,6 +2,7 @@ package com.leonpatmore.faas.source
 
 import com.leonpatmore.faas.CoreProperties
 import com.leonpatmore.fass.common.Handler
+import com.leonpatmore.fass.common.HandlerEventSourceFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -13,6 +14,7 @@ class Validators {
             override fun validate(
                 handlers: Map<String, Handler<*>>,
                 properties: CoreProperties,
+                factories: Map<String, HandlerEventSourceFactory<*>>,
             ): Boolean {
                 return handlers.isNotEmpty()
             }
@@ -24,6 +26,7 @@ class Validators {
             override fun validate(
                 handlers: Map<String, Handler<*>>,
                 properties: CoreProperties,
+                factories: Map<String, HandlerEventSourceFactory<*>>,
             ): Boolean {
                 return (properties.functions.isEmpty() && handlers.size == 1) || properties.functions.isNotEmpty()
             }
@@ -35,8 +38,21 @@ class Validators {
             override fun validate(
                 handlers: Map<String, Handler<*>>,
                 properties: CoreProperties,
+                factories: Map<String, HandlerEventSourceFactory<*>>,
             ): Boolean {
                 return !(properties.functions.isNotEmpty() && properties.root != null)
+            }
+        }
+
+    @Bean
+    fun thereMustBeAtLeastOneSourceFactory() =
+        object : HandlersPropertiesValidator("there must be at-least one factory") {
+            override fun validate(
+                handlers: Map<String, Handler<*>>,
+                properties: CoreProperties,
+                factories: Map<String, HandlerEventSourceFactory<*>>,
+            ): Boolean {
+                return factories.isNotEmpty()
             }
         }
 }
