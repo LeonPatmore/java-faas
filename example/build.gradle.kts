@@ -31,6 +31,10 @@ dependencies {
     testImplementation(files("../core/common/build/libs/common-0.0.1-SNAPSHOT-plain.jar"))
 }
 
+tasks.getByName("bootJar") {
+    enabled = false
+}
+
 kotlin {
     compilerOptions {
         freeCompilerArgs.addAll("-Xjsr305=strict")

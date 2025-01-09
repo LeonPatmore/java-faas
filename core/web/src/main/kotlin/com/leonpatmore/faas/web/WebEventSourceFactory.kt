@@ -12,8 +12,8 @@ import org.springframework.web.servlet.mvc.method.RequestMappingInfo
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping
 import java.lang.reflect.Method
 
-@Component
 @ConditionalOnProperty(EVENT_SOURCE_ENABLED_PROPERTY_PREFIX + "web.enabled")
+@Component
 class WebEventSourceFactory(
     private val handlerMapping: RequestMappingHandlerMapping,
     private val objectMapper: ObjectMapper,
