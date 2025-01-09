@@ -2,11 +2,11 @@ FROM amazoncorretto:21-alpine AS build
 
 WORKDIR /app
 
-COPY gradle gradle
-COPY gradlew .
-COPY gradlew.bat .
-COPY build.gradle.kts .
-COPY settings.gradle.kts .
+COPY core-tmp/gradle gradle
+COPY core-tmp/gradlew .
+COPY core-tmp/gradlew.bat .
+COPY core-tmp/build.gradle.kts .
+COPY core-tmp/settings.gradle.kts .
 RUN chmod +x gradlew
 COPY common common
 COPY core core

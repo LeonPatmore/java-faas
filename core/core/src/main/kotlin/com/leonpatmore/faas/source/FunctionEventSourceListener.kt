@@ -5,7 +5,6 @@ import com.leonpatmore.faas.CoreProperties
 import com.leonpatmore.faas.FunctionSourceProperties
 import com.leonpatmore.faas.RootFunctionProperties
 import com.leonpatmore.faas.SpringUtils.Companion.exit
-import com.leonpatmore.faas.source.FunctionEventSourceListener.Companion.LOGGER
 import com.leonpatmore.fass.common.Handler
 import com.leonpatmore.fass.common.HandlerEventSourceFactory
 import org.slf4j.Logger
