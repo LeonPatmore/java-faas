@@ -21,7 +21,7 @@ class E2ETests {
     private lateinit var webEventSourceFactory: WebEventSourceFactory
 
     @Autowired
-    private lateinit var testHandler: Handler<*>
+    private lateinit var testHandler: Handler<String>
 
     @Autowired
     private lateinit var applicationContext: ApplicationContext

@@ -1,0 +1,26 @@
+services:
+  localstack:
+    image: localstack/localstack:latest
+    container_name: localstack
+    ports:
+      - "4566:4566"
+      - "4571:4571"
+    environment:
+      - SERVICES=sqs
+      - AWS_DEFAULT_REGION=us-east-1
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+  function:
+    image: spring-boot-faas
+    ports:
+      - "8080:8080"
+    environment:
+      - EVENT_SOURCE_SQS_ENABLED=true
+      - SPRING_CLOUD_AWS_REGION_STATIC=us-east-1
+      - SPRING_CLOUD_AWS_SQS_ENDPOINT=http://localstack:4566
+      - SPRING_CLOUD_AWS_CREDENTIALS_ACCESS_KEY=dummy
+      - SPRING_CLOUD_AWS_CREDENTIALS_SECRET_KEY=dummy
+      - ROOT_SOURCE_PROPS_QUEUENAME=testQueue
+    volumes:
+      - ../example/build/libs/example-0.0.1-SNAPSHOT-plain.jar:/app/handler/handler.jar

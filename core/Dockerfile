@@ -11,6 +11,7 @@ COPY settings.gradle.kts .
 COPY common common
 COPY core core
 COPY web web
+COPY sqs sqs
 RUN ./gradlew clean build -x test
 
 FROM amazoncorretto:21-alpine

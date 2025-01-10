@@ -9,5 +9,3 @@ interface Handler<T> {
 
     fun getMessageType(): Class<T>
 }
-
-abstract class NamedHandler<T>(val name: String) : Handler<T>

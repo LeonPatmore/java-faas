@@ -36,23 +36,27 @@ class FunctionEventSourceListener(
         val functionConfigs =
             properties.functions.mapValues {
                 val handler = it.value.handler
+                if (!handlers.containsKey(handler)) {
+                    exit("Handler [ $handler ] not found for function [ ${it.key} ]", context)
+                }
                 Pair(handlers[handler], it.value as RootFunctionProperties)
             } + if (properties.functions.isEmpty()) mapOf("root" to Pair(handlers.values.single(), properties.root)) else emptyMap()
 
         functionConfigs.forEach { (functionName, props) ->
-            LOGGER.info("Setting up event source for function {}", functionName)
+            val sourcePropsMap = props.second!!.source?.props ?: emptyMap()
+            LOGGER.info("Setting up event source for function {} with custom props {}", functionName, sourcePropsMap)
             val factory = factories.getEventSourceFactory(props.second?.source, context)
-            doSomething(factory, props.first!!, props.second, context)
+            wrapWithSource(factory, props.first!!, sourcePropsMap, context)
         }
     }
 
-    fun <T> doSomething(
+    fun <T> wrapWithSource(
         factory: HandlerEventSourceFactory<T>,
         handler: Handler<*>,
-        functionProps: RootFunctionProperties?,
+        sourcePropsMap: Map<String, Any>,
         context: GenericApplicationContext,
     ) {
-        val sourceProps = objectMapper.convertValue(functionProps?.source?.props ?: emptyMap<String, Any>(), factory.getPropertyClass())
+        val sourceProps = objectMapper.convertValue(sourcePropsMap, factory.getPropertyClass())
         LOGGER.info("Using source properties [ $sourceProps ]")
         factory.wrapHandler(handler, context, sourceProps)
     }

@@ -16,4 +16,7 @@ class TestHandlerConfiguration {
         every { mock.handle(any()) } returns Response("res")
         return mock
     }
+
+    @Bean
+    fun testDtoHandler() = TestDtoHandler()
 }

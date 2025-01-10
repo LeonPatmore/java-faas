@@ -1,5 +1,6 @@
 package com.leonpatmore.faas
 
+import com.leonpatmore.faas.common.TestHandlerConfiguration
 import com.leonpatmore.fass.common.EventTarget
 import com.leonpatmore.fass.common.Handler
 import com.leonpatmore.fass.common.HandlerEventSourceFactory
@@ -16,8 +17,13 @@ import org.springframework.context.support.GenericApplicationContext
 import org.springframework.context.support.registerBean
 import org.springframework.test.context.ContextConfiguration
 
-@SpringBootTest(properties = ["root.source.props.requiredProp=abc"])
-@ContextConfiguration(classes = [TestConfig::class])
+@SpringBootTest(
+    properties = [
+        "functions.test.source.props.requiredProp=abc",
+        "functions.test.handler=stringTestHandler",
+    ],
+)
+@ContextConfiguration(classes = [TestConfig::class, TestHandlerConfiguration::class])
 class E2ETests {
     @Autowired
     private lateinit var eventSource: TestEventSource
@@ -67,9 +73,6 @@ class TestEventTargetFactory : HandlerEventTargetFactory {
 
 @TestConfiguration
 class TestConfig {
-    @Bean
-    fun testHandler() = TestHandler()
-
     @Bean
     fun testEventSourceFactory() = TestEventSourceFactory()
 

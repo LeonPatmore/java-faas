@@ -1,5 +1,6 @@
 
 dependencies {
+    implementation("org.springframework.boot:spring-boot-starter-json")
     implementation("io.awspring.cloud:spring-cloud-aws-starter-sqs:3.2.1")
     implementation("com.fasterxml.jackson.core:jackson-databind")
     compileOnly(project(":common"))

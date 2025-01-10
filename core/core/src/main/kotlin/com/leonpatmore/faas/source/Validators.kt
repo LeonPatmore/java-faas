@@ -46,7 +46,7 @@ class Validators {
 
     @Bean
     fun thereMustBeAtLeastOneSourceFactory() =
-        object : HandlersPropertiesValidator("there must be at-least one factory") {
+        object : HandlersPropertiesValidator("there must be at-least one source factory") {
             override fun validate(
                 handlers: Map<String, Handler<*>>,
                 properties: CoreProperties,

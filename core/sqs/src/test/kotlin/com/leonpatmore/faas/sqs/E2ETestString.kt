@@ -1,6 +1,5 @@
 package com.leonpatmore.faas.sqs
 
-import com.leonpatmore.faas.common.TestDto
 import com.leonpatmore.faas.common.TestDtoHandler
 import com.leonpatmore.faas.common.TestHandlerConfiguration
 import com.leonpatmore.fass.common.Handler
@@ -10,26 +9,21 @@ import io.mockk.verify
 import org.awaitility.Awaitility.await
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.ApplicationContext
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
 import org.springframework.context.support.GenericApplicationContext
-import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
-import software.amazon.awssdk.services.sqs.SqsAsyncClient
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.toJavaDuration
 
 @SpringBootTest(properties = ["logging.level.io.awspring.cloud.sqs=DEBUG", "event.source.sqs.enabled=true"])
 @ContextConfiguration(classes = [TestHandlerConfiguration::class], initializers = [SqsE2ETestInitializer::class])
-class E2ETest {
+class E2ETestString {
     @Autowired
     private lateinit var sqsTemplate: SqsTemplate
 
     @Autowired
-    private lateinit var testDtoHandler: TestDtoHandler
+    private lateinit var stringTestHandler: Handler<String>
 
     @Autowired
     private lateinit var sqsEventSourceFactory: SqsEventSourceFactory
@@ -38,36 +32,19 @@ class E2ETest {
     private lateinit var applicationContext: ApplicationContext
 
     @Test
-    fun `test message`() {
-        sqsEventSourceFactory.wrapHandler(testDtoHandler, applicationContext as GenericApplicationContext, SqsProperties("test-queue"))
+    fun `test string`() {
+        sqsEventSourceFactory.wrapHandler(stringTestHandler, applicationContext as GenericApplicationContext, SqsProperties("test-queue-string"))
 
-        sqsTemplate.send { it.queue("test-queue").payload(TestDto("leon", "patmore")) }
+        sqsTemplate.send { it.queue("test-queue-string").payload("some-payload") }
 
         await().atMost(10.seconds.toJavaDuration()).untilAsserted {
             verify {
-                testDtoHandler.mock.accept(
+                stringTestHandler.handle(
                     withArg {
-                        it.firstName shouldBe "leon"
-                        it.secondName shouldBe "patmore"
+                        it.body shouldBe "some-payload"
                     },
                 )
             }
         }
     }
 }
-
-@Configuration
-class TestConfig {
-    @Bean
-    fun sqsTemplate(sqsAsyncClient: SqsAsyncClient): SqsTemplate {
-        return SqsTemplate.builder()
-            .sqsAsyncClient(sqsAsyncClient)
-            .configureDefaultConverter {
-                it.doNotSendPayloadTypeHeader()
-            }
-            .build()
-    }
-}
-
-@SpringBootApplication
-class TestApp
