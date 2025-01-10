@@ -1,6 +1,5 @@
 package com.leonpatmore.faas
 
-import com.leonpatmore.faas.common.TestHandler
 import com.leonpatmore.fass.common.EventTarget
 import com.leonpatmore.fass.common.Handler
 import com.leonpatmore.fass.common.HandlerEventSourceFactory

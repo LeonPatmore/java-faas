@@ -1,29 +1,27 @@
 package com.leonpatmore.faas.web
 
-import com.leonpatmore.faas.common.TestHandler
-import com.leonpatmore.faas.common.TestHandler.Companion.RESPONSE_STRING
+import com.leonpatmore.faas.common.TestHandlerConfiguration
+import com.leonpatmore.fass.common.Handler
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.ApplicationContext
-import org.springframework.context.annotation.Bean
 import org.springframework.context.support.GenericApplicationContext
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@SpringBootTest(properties = ["event.source.web.enabled=true"], classes = [TestConfig::class])
+@SpringBootTest(properties = ["event.source.web.enabled=true"], classes = [TestHandlerConfiguration::class])
 @AutoConfigureMockMvc
 class E2ETests {
     @Autowired
     private lateinit var webEventSourceFactory: WebEventSourceFactory
 
     @Autowired
-    private lateinit var testHandler: TestHandler
+    private lateinit var testHandler: Handler<*>
 
     @Autowired
     private lateinit var applicationContext: ApplicationContext
@@ -41,14 +39,8 @@ class E2ETests {
 
         mockMvc.perform(post("/api").content("hello"))
             .andExpect(status().isOk)
-            .andExpect(content().string(RESPONSE_STRING))
+            .andExpect(content().string("res"))
     }
-}
-
-@TestConfiguration
-class TestConfig {
-    @Bean
-    fun testHandler() = TestHandler()
 }
 
 @SpringBootApplication
