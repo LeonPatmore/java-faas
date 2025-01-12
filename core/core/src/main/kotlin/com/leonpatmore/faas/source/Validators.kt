@@ -1,8 +1,9 @@
 package com.leonpatmore.faas.source
 
 import com.leonpatmore.faas.CoreProperties
+import com.leonpatmore.faas.HandlersPropertiesValidator
 import com.leonpatmore.fass.common.Handler
-import com.leonpatmore.fass.common.HandlerEventSourceFactory
+import com.leonpatmore.fass.common.source.HandlerEventSourceFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 

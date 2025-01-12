@@ -1,5 +1,6 @@
-package com.leonpatmore.fass.common
+package com.leonpatmore.fass.common.source
 
+import com.leonpatmore.fass.common.Handler
 import org.springframework.context.support.GenericApplicationContext
 
 interface HandlerEventSourceFactory<PROPS> {

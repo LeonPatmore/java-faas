@@ -1,9 +1,9 @@
 package com.leonpatmore.faas.web
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.leonpatmore.fass.common.EVENT_SOURCE_ENABLED_PROPERTY_PREFIX
-import com.leonpatmore.fass.common.FunctionSourceData
-import com.leonpatmore.fass.common.HandlerEventSourceFactory
+import com.leonpatmore.fass.common.source.EVENT_SOURCE_ENABLED_PROPERTY_PREFIX
+import com.leonpatmore.fass.common.source.FunctionSourceData
+import com.leonpatmore.fass.common.source.HandlerEventSourceFactory
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.annotation.RequestMethod

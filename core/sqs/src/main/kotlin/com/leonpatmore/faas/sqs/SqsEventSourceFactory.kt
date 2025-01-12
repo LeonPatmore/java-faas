@@ -1,11 +1,11 @@
 package com.leonpatmore.faas.sqs
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.leonpatmore.fass.common.EVENT_SOURCE_ENABLED_PROPERTY_PREFIX
-import com.leonpatmore.fass.common.FunctionSourceData
 import com.leonpatmore.fass.common.Handler
-import com.leonpatmore.fass.common.HandlerEventSourceFactory
 import com.leonpatmore.fass.common.Message
+import com.leonpatmore.fass.common.source.EVENT_SOURCE_ENABLED_PROPERTY_PREFIX
+import com.leonpatmore.fass.common.source.FunctionSourceData
+import com.leonpatmore.fass.common.source.HandlerEventSourceFactory
 import io.awspring.cloud.sqs.config.SqsMessageListenerContainerFactory
 import io.awspring.cloud.sqs.listener.MessageListenerContainerRegistry
 import io.awspring.cloud.sqs.listener.SqsMessageListenerContainer

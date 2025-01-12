@@ -1,8 +1,8 @@
 package com.leonpatmore.faas.web
 
 import com.leonpatmore.faas.common.TestHandlerConfiguration
-import com.leonpatmore.fass.common.FunctionSourceData
 import com.leonpatmore.fass.common.Handler
+import com.leonpatmore.fass.common.source.FunctionSourceData
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication

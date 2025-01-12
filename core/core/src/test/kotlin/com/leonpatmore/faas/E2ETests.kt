@@ -1,77 +1,52 @@
 package com.leonpatmore.faas
 
 import com.leonpatmore.faas.common.TestHandlerConfiguration
-import com.leonpatmore.fass.common.EventTarget
-import com.leonpatmore.fass.common.FunctionSourceData
-import com.leonpatmore.fass.common.Handler
-import com.leonpatmore.fass.common.HandlerEventSourceFactory
-import com.leonpatmore.fass.common.HandlerEventTargetFactory
-import com.leonpatmore.fass.common.Message
-import com.leonpatmore.fass.common.Response
+import com.leonpatmore.faas.common.target.TestEventTarget
+import com.leonpatmore.faas.common.target.TestEventTargetConfiguration
+import com.leonpatmore.fass.common.target.EventTarget
 import io.kotest.matchers.shouldBe
+import io.mockk.verify
+import org.awaitility.Awaitility.await
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.context.TestConfiguration
-import org.springframework.context.annotation.Bean
-import org.springframework.context.support.registerBean
 import org.springframework.test.context.ContextConfiguration
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.toJavaDuration
 
 @SpringBootTest(
     properties = [
         "functions.test.source.props.requiredProp=abc",
         "functions.test.handler=stringTestHandler",
+        "functions.test.target.factory=testEventTargetFactory",
     ],
 )
-@ContextConfiguration(classes = [TestConfig::class, TestHandlerConfiguration::class])
+@ContextConfiguration(
+    classes = [
+        TestEventSourceFactoryConfiguration::class,
+        TestHandlerConfiguration::class,
+        TestEventTargetConfiguration::class,
+    ],
+)
 class E2ETests {
     @Autowired
-    private lateinit var eventSource: TestEventSource
+    private lateinit var testEventSource: TestEventSource
+
+    @Autowired
+    private lateinit var testEventTarget: EventTarget
 
     @Test
     fun name() {
-        eventSource.produce() shouldBe "res"
-    }
-}
+        testEventSource.produce() shouldBe "res"
 
-class TestEventSource(private val handler: Handler<*>) {
-    fun produce(): Any {
-        val typedHandler = handler as Handler<String>
-        val res = typedHandler.handle(Message("test message"))
-        return res.body
-    }
-}
-
-data class TestEventSourceProperties(val requiredProp: String, val optional: String = "hello")
-
-class TestEventSourceFactory : HandlerEventSourceFactory<TestEventSourceProperties> {
-    override fun wrapHandler(data: FunctionSourceData<TestEventSourceProperties>) {
-        val testEventSource = TestEventSource(data.handler)
-        data.context.registerBean {
-            testEventSource
+        await().atMost(10.seconds.toJavaDuration()).untilAsserted {
+            verify {
+                (testEventTarget as TestEventTarget).mock.accept(
+                    withArg {
+                        it.body shouldBe "res"
+                    },
+                )
+            }
         }
     }
-
-    override fun getPropertyClass() = TestEventSourceProperties::class.java
-}
-
-class TestEventTarget : EventTarget {
-    override fun handle(res: Response) {
-        println("Event target for message ${res.body} reached")
-    }
-}
-
-class TestEventTargetFactory : HandlerEventTargetFactory {
-    override fun generateTarget(): EventTarget {
-        return TestEventTarget()
-    }
-}
-
-@TestConfiguration
-class TestConfig {
-    @Bean
-    fun testEventSourceFactory() = TestEventSourceFactory()
-
-    @Bean
-    fun testEventTargetFactory() = TestEventTargetFactory()
 }

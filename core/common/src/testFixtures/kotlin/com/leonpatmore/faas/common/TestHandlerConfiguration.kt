@@ -13,7 +13,10 @@ class TestHandlerConfiguration {
     fun stringTestHandler(): Handler<String> {
         val mock = mockk<Handler<String>>()
         every { mock.getMessageType() } returns String::class.java
-        every { mock.handle(any()) } returns Response("res")
+        every { mock.handle(any()) } answers {
+            println("Test handler has received: ${it.invocation.args[0]}")
+            Response("res")
+        }
         return mock
     }
 

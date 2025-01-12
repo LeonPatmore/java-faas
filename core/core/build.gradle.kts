@@ -10,5 +10,6 @@ dependencies {
     runtimeOnly(project(":sqs"))
 
     testImplementation("io.kotest:kotest-assertions-core:5.9.1")
+    testImplementation("org.awaitility:awaitility:4.2.2")
     testImplementation(testFixtures(project(":common")))
 }

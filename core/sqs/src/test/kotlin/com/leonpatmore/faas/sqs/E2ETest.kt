@@ -3,7 +3,7 @@ package com.leonpatmore.faas.sqs
 import com.leonpatmore.faas.common.TestDto
 import com.leonpatmore.faas.common.TestDtoHandler
 import com.leonpatmore.faas.common.TestHandlerConfiguration
-import com.leonpatmore.fass.common.FunctionSourceData
+import com.leonpatmore.fass.common.source.FunctionSourceData
 import io.awspring.cloud.sqs.operations.SqsTemplate
 import io.kotest.matchers.shouldBe
 import io.mockk.verify
