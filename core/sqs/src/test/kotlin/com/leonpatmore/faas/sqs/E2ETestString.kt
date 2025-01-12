@@ -1,7 +1,7 @@
 package com.leonpatmore.faas.sqs
 
-import com.leonpatmore.faas.common.TestDtoHandler
 import com.leonpatmore.faas.common.TestHandlerConfiguration
+import com.leonpatmore.fass.common.FunctionSourceData
 import com.leonpatmore.fass.common.Handler
 import io.awspring.cloud.sqs.operations.SqsTemplate
 import io.kotest.matchers.shouldBe
@@ -33,7 +33,14 @@ class E2ETestString {
 
     @Test
     fun `test string`() {
-        sqsEventSourceFactory.wrapHandler(stringTestHandler, applicationContext as GenericApplicationContext, SqsProperties("test-queue-string"))
+        sqsEventSourceFactory.wrapHandler(
+            FunctionSourceData(
+                "function",
+                stringTestHandler,
+                applicationContext as GenericApplicationContext,
+                SqsProperties("test-queue-string"),
+            ),
+        )
 
         sqsTemplate.send { it.queue("test-queue-string").payload("some-payload") }
 

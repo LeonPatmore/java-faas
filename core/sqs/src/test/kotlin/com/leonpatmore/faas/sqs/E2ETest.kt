@@ -3,7 +3,7 @@ package com.leonpatmore.faas.sqs
 import com.leonpatmore.faas.common.TestDto
 import com.leonpatmore.faas.common.TestDtoHandler
 import com.leonpatmore.faas.common.TestHandlerConfiguration
-import com.leonpatmore.fass.common.Handler
+import com.leonpatmore.fass.common.FunctionSourceData
 import io.awspring.cloud.sqs.operations.SqsTemplate
 import io.kotest.matchers.shouldBe
 import io.mockk.verify
@@ -16,7 +16,6 @@ import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.support.GenericApplicationContext
-import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
 import software.amazon.awssdk.services.sqs.SqsAsyncClient
 import kotlin.time.Duration.Companion.seconds
@@ -39,7 +38,9 @@ class E2ETest {
 
     @Test
     fun `test message`() {
-        sqsEventSourceFactory.wrapHandler(testDtoHandler, applicationContext as GenericApplicationContext, SqsProperties("test-queue"))
+        sqsEventSourceFactory.wrapHandler(
+            FunctionSourceData("function", testDtoHandler, applicationContext as GenericApplicationContext, SqsProperties("test-queue")),
+        )
 
         sqsTemplate.send { it.queue("test-queue").payload(TestDto("leon", "patmore")) }
 

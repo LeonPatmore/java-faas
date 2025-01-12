@@ -5,6 +5,7 @@ import com.leonpatmore.faas.CoreProperties
 import com.leonpatmore.faas.FunctionSourceProperties
 import com.leonpatmore.faas.RootFunctionProperties
 import com.leonpatmore.faas.SpringUtils.Companion.exit
+import com.leonpatmore.fass.common.FunctionSourceData
 import com.leonpatmore.fass.common.Handler
 import com.leonpatmore.fass.common.HandlerEventSourceFactory
 import org.slf4j.Logger
@@ -46,19 +47,20 @@ class FunctionEventSourceListener(
             val sourcePropsMap = props.second!!.source?.props ?: emptyMap()
             LOGGER.info("Setting up event source for function {} with custom props {}", functionName, sourcePropsMap)
             val factory = factories.getEventSourceFactory(props.second?.source, context)
-            wrapWithSource(factory, props.first!!, sourcePropsMap, context)
+            wrapWithSource(factory, functionName, props.first!!, sourcePropsMap, context)
         }
     }
 
     fun <T> wrapWithSource(
         factory: HandlerEventSourceFactory<T>,
+        functionName: String,
         handler: Handler<*>,
         sourcePropsMap: Map<String, Any>,
         context: GenericApplicationContext,
     ) {
         val sourceProps = objectMapper.convertValue(sourcePropsMap, factory.getPropertyClass())
         LOGGER.info("Using source properties [ $sourceProps ]")
-        factory.wrapHandler(handler, context, sourceProps)
+        factory.wrapHandler(FunctionSourceData(functionName, handler, context, sourceProps))
     }
 
     companion object {

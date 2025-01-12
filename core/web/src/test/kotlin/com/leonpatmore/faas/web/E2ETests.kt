@@ -1,6 +1,7 @@
 package com.leonpatmore.faas.web
 
 import com.leonpatmore.faas.common.TestHandlerConfiguration
+import com.leonpatmore.fass.common.FunctionSourceData
 import com.leonpatmore.fass.common.Handler
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -32,9 +33,7 @@ class E2ETests {
     @Test
     fun name() {
         webEventSourceFactory.wrapHandler(
-            testHandler,
-            applicationContext as GenericApplicationContext,
-            WebProperties(),
+            FunctionSourceData("function", testHandler, applicationContext as GenericApplicationContext, WebProperties()),
         )
 
         mockMvc.perform(post("/api").content("hello"))

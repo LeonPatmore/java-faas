@@ -2,6 +2,7 @@ package com.leonpatmore.faas
 
 import com.leonpatmore.faas.common.TestHandlerConfiguration
 import com.leonpatmore.fass.common.EventTarget
+import com.leonpatmore.fass.common.FunctionSourceData
 import com.leonpatmore.fass.common.Handler
 import com.leonpatmore.fass.common.HandlerEventSourceFactory
 import com.leonpatmore.fass.common.HandlerEventTargetFactory
@@ -13,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
-import org.springframework.context.support.GenericApplicationContext
 import org.springframework.context.support.registerBean
 import org.springframework.test.context.ContextConfiguration
 
@@ -45,13 +45,9 @@ class TestEventSource(private val handler: Handler<*>) {
 data class TestEventSourceProperties(val requiredProp: String, val optional: String = "hello")
 
 class TestEventSourceFactory : HandlerEventSourceFactory<TestEventSourceProperties> {
-    override fun wrapHandler(
-        handler: Handler<*>,
-        context: GenericApplicationContext,
-        properties: TestEventSourceProperties,
-    ) {
-        val testEventSource = TestEventSource(handler)
-        context.registerBean {
+    override fun wrapHandler(data: FunctionSourceData<TestEventSourceProperties>) {
+        val testEventSource = TestEventSource(data.handler)
+        data.context.registerBean {
             testEventSource
         }
     }
