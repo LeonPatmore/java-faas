@@ -35,7 +35,7 @@ class E2ETestString {
     fun `test string`() {
         sqsEventSourceFactory.wrapHandler(
             FunctionSourceData(
-                "function",
+                "stringFunction",
                 stringTestHandler,
                 applicationContext as GenericApplicationContext,
                 SqsProperties("test-queue-string"),
