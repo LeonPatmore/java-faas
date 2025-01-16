@@ -1,7 +1,5 @@
 import docker
 
-from docker_utils import NETWORK_NAME
-
 CLIENT = docker.from_env()
 
 
@@ -9,8 +7,9 @@ class SqsRunner:
 
     HOST_NAME = "localstack"
 
-    def __init__(self):
+    def __init__(self, network_name: str):
         self.container = None
+        self.network_name = network_name
 
     def start(self):
         if self.container:
@@ -23,7 +22,7 @@ class SqsRunner:
                                                volumes=["/var/run/docker.sock:/var/run/docker.sock"],
                                                detach=True,
                                                remove=True,
-                                               network=NETWORK_NAME,
+                                               network=self.network_name,
                                                name=self.HOST_NAME)
 
     @staticmethod
