@@ -36,7 +36,7 @@ class FunctionInitialiserListener(
             } + if (properties.functions.isEmpty()) mapOf("root" to Pair(handlers.values.single(), properties.root)) else emptyMap()
 
         functionConfigs.forEach { (functionName, props) ->
-            initialisers.forEach { it.initialseFunction(functionName, props.first!!, props.second!!, context) }
+            initialisers.forEach { it.initialseFunction(functionName, props.first!!, props.second, context) }
         }
     }
 }
@@ -45,7 +45,7 @@ interface FunctionInitialiser {
     fun initialseFunction(
         functionName: String,
         handler: Handler<*>,
-        props: RootFunctionProperties,
+        props: RootFunctionProperties?,
         context: GenericApplicationContext,
     )
 }

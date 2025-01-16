@@ -1,5 +1,6 @@
 import os
 
+from docker_utils import NETWORK_NAME
 from faas_runner import FaasRunner
 import docker
 
@@ -21,5 +22,7 @@ class DockerFaasRunner(FaasRunner):
                                           environment=envs,
                                           volumes=volumes,
                                           ports={'8080/tcp': 8080},
-                                          detach=True)
+                                          detach=True,
+                                          remove=True,
+                                          network=NETWORK_NAME)
         return container

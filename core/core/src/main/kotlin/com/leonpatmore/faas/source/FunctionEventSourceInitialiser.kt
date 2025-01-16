@@ -22,12 +22,12 @@ class FunctionEventSourceInitialiser(
     override fun initialseFunction(
         functionName: String,
         handler: Handler<*>,
-        props: RootFunctionProperties,
+        props: RootFunctionProperties?,
         context: GenericApplicationContext,
     ) {
-        val sourcePropsMap = props.source?.props ?: emptyMap()
+        val sourcePropsMap = props?.source?.props ?: emptyMap()
         LOGGER.info("Setting up event source for function {} with custom props {}", functionName, sourcePropsMap)
-        val factory = factories.getEventSourceFactory(props.source, context)
+        val factory = factories.getEventSourceFactory(props?.source, context)
         wrapWithSource(factory, functionName, handler, sourcePropsMap, context)
     }
 

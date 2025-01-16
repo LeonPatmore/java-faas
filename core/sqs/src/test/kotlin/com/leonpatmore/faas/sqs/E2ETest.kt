@@ -39,7 +39,12 @@ class E2ETest {
     @Test
     fun `test message`() {
         sqsEventSourceFactory.wrapHandler(
-            FunctionSourceData("objectFunction", testDtoHandler, applicationContext as GenericApplicationContext, SqsProperties("test-queue")),
+            FunctionSourceData(
+                "objectFunction",
+                testDtoHandler,
+                applicationContext as GenericApplicationContext,
+                SqsProperties("test-queue"),
+            ),
         )
 
         sqsTemplate.send { it.queue("test-queue").payload(TestDto("leon", "patmore")) }

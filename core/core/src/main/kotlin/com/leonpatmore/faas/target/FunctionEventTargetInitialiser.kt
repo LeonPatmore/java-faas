@@ -17,10 +17,10 @@ class FunctionEventTargetInitialiser : FunctionInitialiser {
     override fun initialseFunction(
         functionName: String,
         handler: Handler<*>,
-        props: RootFunctionProperties,
+        props: RootFunctionProperties?,
         context: GenericApplicationContext,
     ) {
-        if (props.target?.factory == null) {
+        if (props?.target?.factory == null) {
             return
         }
         val targetFactory = props.target.factory
