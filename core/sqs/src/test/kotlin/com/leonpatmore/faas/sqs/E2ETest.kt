@@ -3,6 +3,8 @@ package com.leonpatmore.faas.sqs
 import com.leonpatmore.faas.common.TestDto
 import com.leonpatmore.faas.common.TestDtoHandler
 import com.leonpatmore.faas.common.TestHandlerConfiguration
+import com.leonpatmore.faas.sqs.source.SqsEventSourceFactory
+import com.leonpatmore.faas.sqs.source.SqsSourceProperties
 import com.leonpatmore.fass.common.source.FunctionSourceData
 import io.awspring.cloud.sqs.operations.SqsTemplate
 import io.kotest.matchers.shouldBe
@@ -21,7 +23,11 @@ import software.amazon.awssdk.services.sqs.SqsAsyncClient
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.toJavaDuration
 
-@SpringBootTest(properties = ["logging.level.io.awspring.cloud.sqs=DEBUG", "event.source.sqs.enabled=true"])
+@SpringBootTest(properties = [
+    "logging.level.io.awspring.cloud.sqs=DEBUG",
+    "event.source.sqs.enabled=true",
+    "root.target.factory=asd"
+])
 @ContextConfiguration(classes = [TestHandlerConfiguration::class], initializers = [SqsE2ETestInitializer::class])
 class E2ETest {
     @Autowired
@@ -43,7 +49,7 @@ class E2ETest {
                 "objectFunction",
                 testDtoHandler,
                 applicationContext as GenericApplicationContext,
-                SqsProperties("test-queue"),
+                SqsSourceProperties("test-queue"),
             ),
         )
 

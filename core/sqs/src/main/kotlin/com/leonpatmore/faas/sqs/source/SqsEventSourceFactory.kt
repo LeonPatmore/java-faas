@@ -1,4 +1,4 @@
-package com.leonpatmore.faas.sqs
+package com.leonpatmore.faas.sqs.source
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.leonpatmore.fass.common.Handler
@@ -21,17 +21,17 @@ class SqsEventSourceFactory(
     private val sqsAsyncClient: SqsAsyncClient,
     private val objectMapper: ObjectMapper,
     private val registry: MessageListenerContainerRegistry,
-) : HandlerEventSourceFactory<SqsProperties> {
-    override fun wrapHandler(data: FunctionSourceData<SqsProperties>) {
+) : HandlerEventSourceFactory<SqsSourceProperties> {
+    override fun wrapHandler(data: FunctionSourceData<SqsSourceProperties>) {
         val container = createContainer(data)
         container.start()
         registry.registerListenerContainer(container)
         data.context.registerBean(data.functionName + "SqsListenerContainer", SqsMessageListenerContainer::class.java, container)
     }
 
-    override fun getPropertyClass(): Class<SqsProperties> = SqsProperties::class.java
+    override fun getPropertyClass(): Class<SqsSourceProperties> = SqsSourceProperties::class.java
 
-    private fun createContainer(data: FunctionSourceData<SqsProperties>) =
+    private fun createContainer(data: FunctionSourceData<SqsSourceProperties>) =
         SqsMessageListenerContainerFactory<String>()
             .apply { this.setSqsAsyncClient(sqsAsyncClient) }
             .createContainer(data.properties.queueName).apply {

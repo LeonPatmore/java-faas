@@ -11,7 +11,7 @@ open class RootFunctionProperties(
 class FunctionProperties(
     val handler: String,
     source: FunctionSourceProperties = FunctionSourceProperties(),
-    target: FunctionTargetProperties = FunctionTargetProperties(),
+    target: FunctionTargetProperties? = null,
 ) : RootFunctionProperties(
         source,
         target,
@@ -19,7 +19,7 @@ class FunctionProperties(
 
 data class FunctionSourceProperties(val factory: String? = null, val props: Map<String, Any> = emptyMap())
 
-data class FunctionTargetProperties(val factory: String? = null, val props: Map<String, Any> = emptyMap())
+data class FunctionTargetProperties(val factory: String, val props: Map<String, Any> = emptyMap())
 
 @ConfigurationProperties
 @Validated

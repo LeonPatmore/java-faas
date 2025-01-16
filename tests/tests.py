@@ -1,7 +1,11 @@
+from time import sleep
+
+import docker
 import pytest
 
 from docker_utils import create_network
 from faas_runner_docker import DockerFaasRunner
+from sqs.sqs_message_producer import DockerSqsMessageProducer, SqsMessageProducer
 from sqs.sqs_runner import SqsRunner
 
 
@@ -10,9 +14,14 @@ def network_name():
     return "spring-boot-faas-tests"
 
 
+@pytest.fixture(scope="session")
+def docker_client():
+    return docker.from_env()
+
+
 @pytest.fixture(scope="session", autouse=True)
-def setup_network(network_name):
-    create_network(network_name)
+def setup_network(docker_client, network_name):
+    create_network(docker_client, network_name)
 
 
 @pytest.fixture(scope="session")
@@ -24,8 +33,13 @@ def sqs(network_name):
 
 
 @pytest.fixture(scope="session")
-def faas_runner(network_name):
-    return DockerFaasRunner(network_name)
+def sqs_message_producer(docker_client, network_name) -> SqsMessageProducer:
+    return DockerSqsMessageProducer(docker_client, network_name)
+
+
+@pytest.fixture(scope="session")
+def faas_runner(docker_client, network_name):
+    return DockerFaasRunner(docker_client, network_name)
 
 
 @pytest.fixture
@@ -42,5 +56,7 @@ def run_instance(sqs, faas_runner):
     container.stop()
 
 
-def test_something(run_instance):
+def test_something(run_instance, sqs_message_producer):
+    sleep(5)  # TODO: Improve this to wait for application to be healthy.
+    sqs_message_producer.produce("asd", "testQueue")
     pass

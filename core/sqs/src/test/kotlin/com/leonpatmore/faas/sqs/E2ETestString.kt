@@ -1,6 +1,8 @@
 package com.leonpatmore.faas.sqs
 
 import com.leonpatmore.faas.common.TestHandlerConfiguration
+import com.leonpatmore.faas.sqs.source.SqsEventSourceFactory
+import com.leonpatmore.faas.sqs.source.SqsSourceProperties
 import com.leonpatmore.fass.common.Handler
 import com.leonpatmore.fass.common.source.FunctionSourceData
 import io.awspring.cloud.sqs.operations.SqsTemplate
@@ -38,7 +40,7 @@ class E2ETestString {
                 "stringFunction",
                 stringTestHandler,
                 applicationContext as GenericApplicationContext,
-                SqsProperties("test-queue-string"),
+                SqsSourceProperties("test-queue-string"),
             ),
         )
 

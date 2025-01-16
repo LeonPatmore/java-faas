@@ -1,5 +1,7 @@
 package com.leonpatmore.fass.common.target
 
-interface HandlerEventTargetFactory {
-    fun generateTarget(): EventTarget
+interface HandlerEventTargetFactory<PROPS> {
+    fun generateTarget(props: PROPS?): EventTarget
+
+    fun getPropertyClass(): Class<PROPS>
 }

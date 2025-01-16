@@ -4,6 +4,8 @@ import com.leonpatmore.fass.common.Handler
 import com.leonpatmore.fass.common.Message
 import com.leonpatmore.fass.common.Response
 import com.leonpatmore.fass.common.target.EventTarget
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.config.BeanPostProcessor
 import org.springframework.context.ApplicationContext
 import org.springframework.context.ApplicationContextAware
@@ -21,7 +23,6 @@ class HandlerBeanFactory : BeanPostProcessor, ApplicationContextAware {
         beanName: String,
     ): Any {
         if (bean is Handler<*>) {
-            println("Post processing $beanName")
             return Proxy.newProxyInstance(
                 applicationContext.classLoader,
                 arrayOf(Handler::class.java),
@@ -45,13 +46,20 @@ class EventTargetProxy<T>(
     override fun invoke(
         proxy: Any?,
         method: Method,
-        args: Array<Any?>,
+        args: Array<Any?>?,
     ): Any {
-        println("Before method: " + method.getName())
-        val message = args[0] as Message<T>
+        if (method.name != "handle") {
+            return method.invoke(handler, *(args ?: emptyArray()))
+        }
+        LOGGER.debug("Before method: ${method.name}")
+        val message = args!![0] as Message<T>
         val res = method.invoke(handler, message) as Response
-        println("After method: " + method.getName())
+        LOGGER.debug("After method: ${method.name}")
         targets.forEach { it.handle(res) }
         return res
+    }
+
+    companion object {
+        private val LOGGER: Logger = LoggerFactory.getLogger(EventTargetProxy::class.java)
     }
 }
