@@ -5,3 +5,5 @@ interface HandlerEventTargetFactory<PROPS> {
 
     fun getPropertyClass(): Class<PROPS>
 }
+
+const val EVENT_TARGET_ENABLED_PROPERTY_PREFIX = "event.target."

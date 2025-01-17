@@ -7,7 +7,7 @@ import com.leonpatmore.fass.common.source.EVENT_SOURCE_ENABLED_PROPERTY_PREFIX
 import com.leonpatmore.fass.common.source.FunctionSourceData
 import com.leonpatmore.fass.common.source.HandlerEventSourceFactory
 import io.awspring.cloud.sqs.config.SqsMessageListenerContainerFactory
-import io.awspring.cloud.sqs.listener.MessageListenerContainerRegistry
+import io.awspring.cloud.sqs.listener.DefaultListenerContainerRegistry
 import io.awspring.cloud.sqs.listener.SqsMessageListenerContainer
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -20,13 +20,14 @@ import software.amazon.awssdk.services.sqs.SqsAsyncClient
 class SqsEventSourceFactory(
     private val sqsAsyncClient: SqsAsyncClient,
     private val objectMapper: ObjectMapper,
-    private val registry: MessageListenerContainerRegistry,
 ) : HandlerEventSourceFactory<SqsSourceProperties> {
     override fun wrapHandler(data: FunctionSourceData<SqsSourceProperties>) {
         val container = createContainer(data)
-        container.start()
+        val registry = DefaultListenerContainerRegistry()
         registry.registerListenerContainer(container)
-        data.context.registerBean(data.functionName + "SqsListenerContainer", SqsMessageListenerContainer::class.java, container)
+        registry.start()
+        data.context.beanFactory.registerSingleton(data.functionName + "SqsListenerContainer", container)
+        data.context.beanFactory.registerSingleton(data.functionName + "SqsContainerRegistry", registry)
     }
 
     override fun getPropertyClass(): Class<SqsSourceProperties> = SqsSourceProperties::class.java
