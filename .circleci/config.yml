@@ -39,7 +39,7 @@ jobs:
           command: cd tests && make lint
       - run:
           name: Run Tests
-          command: FAAS_IMAGE_NAME=leonpatmore2/spring-boot-faas:$CIRCLE_SHA1 cd tests && make run
+          command: export FAAS_IMAGE_NAME=leonpatmore2/spring-boot-faas:${CIRCLE_SHA1} & cd tests && make run
       - docker/push:
           image: leonpatmore2/spring-boot-faas
 
