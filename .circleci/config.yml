@@ -70,8 +70,11 @@ workflows:
   version: 2
   ci:
     jobs:
+      - build-example
       - run-core-tests
-      - run-functional-tests
+      - run-functional-tests:
+          requires:
+            - build-example
       - push-docker-image:
           requires:
               - run-core-tests
