@@ -1,3 +1,4 @@
+import os
 from time import sleep
 
 import docker
@@ -49,8 +50,13 @@ def sqs_target_message_consumer(docker_client, network_name, target_sqs_queue) -
 
 
 @pytest.fixture(scope="session")
-def faas_runner(docker_client, network_name):
-    return DockerFaasRunner(docker_client, network_name)
+def faas_image_name():
+    return os.getenv("FAAS_IMAGE_NAME", "leonpatmore2/spring-boot-faas:latest")
+
+
+@pytest.fixture(scope="session")
+def faas_runner(docker_client, network_name, faas_image_name):
+    return DockerFaasRunner(docker_client, network_name, faas_image_name)
 
 
 @pytest.fixture
