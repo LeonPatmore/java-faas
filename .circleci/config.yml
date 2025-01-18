@@ -28,7 +28,7 @@ jobs:
       - setup_remote_docker
       - run:
           name: Build
-          command: cd example && make build-docker
+          command: cd example && make build-docker githubUser=${GITHUB_USER} githubToken=${GITHUB_TOKEN}
       - run:
           name: Save Image
           command: cd example && make save-image
