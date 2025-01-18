@@ -1,6 +1,7 @@
 plugins {
     java
     `java-test-fixtures`
+    jacoco
     kotlin("jvm") version "1.9.25"
     kotlin("plugin.spring") version "1.9.25" apply false
     id("org.springframework.boot") version "3.4.1" apply false
@@ -24,11 +25,27 @@ subprojects {
     apply(plugin = "org.springframework.boot")
     apply(plugin = "io.spring.dependency-management")
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
+    apply(plugin = "jacoco")
 
     java {
         toolchain {
             languageVersion.set(JavaLanguageVersion.of(21))
         }
+    }
+
+    tasks.test {
+        finalizedBy(tasks.jacocoTestReport)
+    }
+    tasks.jacocoTestReport {
+        dependsOn(tasks.test)
+        reports {
+            xml.required = true
+            csv.required = true
+            html.required = true
+        }
+    }
+    jacoco {
+        toolVersion = "0.8.12"
     }
 
     if (name != "core") {

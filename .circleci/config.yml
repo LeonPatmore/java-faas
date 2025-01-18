@@ -1,0 +1,37 @@
+version: 2.1
+
+orbs:
+  docker: circleci/docker@2.8.1
+
+executors:
+  python-executor:
+    docker:
+      - image: cimg/python:3.12
+
+jobs:
+  run-tests:
+    executor: python-executor
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Test core
+          command: make test-core
+
+  build-and-push-docker-image:
+    executor: docker/docker
+    steps:
+      - checkout
+      - setup_remote_docker
+      - docker/check
+      - docker/build:
+          image: leonpatmore2/spring-boot-faas
+      - docker/push:
+          image: leonpatmore2/spring-boot-faas
+
+workflows:
+  version: 2
+  ci:
+    jobs:
+      - run-tests
+      - build-and-push-docker-image
