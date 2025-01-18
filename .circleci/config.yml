@@ -55,7 +55,7 @@ workflows:
     jobs:
       - run-core-tests
       - run-functional-tests
-      - build-and-push-docker-image:
+      - push-docker-image:
           requires:
               - run-core-tests
               - run-functional-tests
