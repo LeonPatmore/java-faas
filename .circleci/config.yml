@@ -28,11 +28,14 @@ jobs:
       - setup_remote_docker
       - run:
           name: Build
-          command: cd example && make build
+          command: cd example && make build-docker
+      - run:
+          name: Save Image
+          command: cd example && make save-image
       - persist_to_workspace:
-          root: example/build/libs
+          root: example
           paths:
-            - example-0.0.1-SNAPSHOT-plain.jar
+            - faas-example.tar
 
   run-functional-tests:
     executor: python-executor
@@ -53,10 +56,14 @@ jobs:
       - attach_workspace:
           at: /tmp/workspace
       - run:
+          name: Load Faas Example Image
+          command: docker load --input /tmp/workspace/faas-example.tar
+      - run:
           name: Run Tests
           command: cd tests && make run
           environment:
-            HANDLER_PATH: /tmp/workspace/example-0.0.1-SNAPSHOT-plain.jar
+            FAAS_IMAGE_NAME: faas-example:latest
+            HANDLER_PATH: ''
       - docker/push:
           image: leonpatmore2/spring-boot-faas
 
