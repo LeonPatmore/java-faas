@@ -18,8 +18,8 @@ jobs:
       - checkout
       - setup_remote_docker
       - run:
-          name: Test core
-          command: make test-core
+          name: Test
+          command: cd core && make test-core
 
   run-functional-tests:
     executor: python-executor
@@ -27,8 +27,14 @@ jobs:
       - checkout
       - setup_remote_docker
       - run:
-          name: Test functional
-          command: make test-functional
+          name: Setup
+          command: cd tests && make install
+      - run:
+          name: Lint
+          command: cd tests && make lint
+      - run:
+          name: Run Tests
+          command: cd tests && make run
 
   build-and-push-docker-image:
     executor: docker/docker
