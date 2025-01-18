@@ -51,15 +51,15 @@ def sqs_target_message_consumer(docker_client, network_name, target_sqs_queue) -
 
 
 @pytest.fixture(scope="session")
-def faas_image_name():
-    image = os.getenv("FAAS_IMAGE_NAME", "leonpatmore2/spring-boot-faas:latest")
-    logging.info(f"Using faas image [ {image} ]")
-    return image
+def faas_image_tag():
+    tag = os.getenv("CIRCLE_SHA1", "latest")
+    logging.info(f"Using faas tag [ {tag} ]")
+    return tag
 
 
 @pytest.fixture(scope="session")
-def faas_runner(docker_client, network_name, faas_image_name):
-    return DockerFaasRunner(docker_client, network_name, faas_image_name)
+def faas_runner(docker_client, network_name, faas_image_tag):
+    return DockerFaasRunner(docker_client, network_name, faas_image_tag)
 
 
 @pytest.fixture

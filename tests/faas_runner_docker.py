@@ -15,10 +15,10 @@ class FaasInstance:
 
 class DockerFaasRunner(FaasRunner):
 
-    def __init__(self, docker_client: DockerClient, network_name: str, image_name: str):
+    def __init__(self, docker_client: DockerClient, network_name: str, image_tag: str):
         self.docker_client = docker_client
         self.network_name = network_name
-        self.image_name = image_name
+        self.image_name = f"leonpatmore2/spring-boot-faas:{image_tag}"
 
     def run(self, envs: dict):
         volumes = [f"{FILE_PATH}/../../example/build/libs/example-0.0.1-SNAPSHOT-plain.jar:/app/handler/handler.jar"]
