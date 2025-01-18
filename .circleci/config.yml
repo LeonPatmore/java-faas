@@ -27,6 +27,7 @@ jobs:
       - docker/build:
           image: leonpatmore2/spring-boot-faas
           path: core
+          docker-context: core
       - docker/push:
           image: leonpatmore2/spring-boot-faas
 
