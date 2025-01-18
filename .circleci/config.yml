@@ -47,9 +47,9 @@ workflows:
   version: 2
   ci:
     jobs:
-      - run-tests
+      - run-core-tests
       - run-functional-tests
       - build-and-push-docker-image:
           requires:
-              - run-tests
+              - run-core-tests
               - run-functional-tests
