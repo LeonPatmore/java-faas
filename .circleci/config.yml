@@ -19,13 +19,18 @@ jobs:
       - setup_remote_docker
       - run:
           name: Test
-          command: cd core && make test-core
+          command: cd core && make test
 
   run-functional-tests:
     executor: python-executor
     steps:
       - checkout
       - setup_remote_docker
+      - docker/check
+      - docker/build:
+          image: leonpatmore2/spring-boot-faas
+          path: core
+          docker-context: core
       - run:
           name: Setup
           command: cd tests && make install
@@ -35,17 +40,12 @@ jobs:
       - run:
           name: Run Tests
           command: cd tests && make run
+      - docker/push:
+          image: leonpatmore2/spring-boot-faas
 
-  build-and-push-docker-image:
+  push-docker-image:
     executor: docker/docker
     steps:
-      - checkout
-      - setup_remote_docker
-      - docker/check
-      - docker/build:
-          image: leonpatmore2/spring-boot-faas
-          path: core
-          docker-context: core
       - docker/push:
           image: leonpatmore2/spring-boot-faas
 
