@@ -1,5 +1,3 @@
-import os
-
 from docker import DockerClient
 
 from docker_utils import wait_for_container_to_be_healthy

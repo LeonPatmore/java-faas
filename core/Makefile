@@ -1,8 +1,8 @@
 build:
-	MSYS_NO_PATHCONV=1 chmod +x gradlew && ./gradlew --no-daemon build -x test
+	MSYS_NO_PATHCONV=1 chmod +x gradlew && ./gradlew build -x test
 
 test:
-	MSYS_NO_PATHCONV=1 chmod +x gradlew && ./gradlew --no-daemon check
+	MSYS_NO_PATHCONV=1 chmod +x gradlew && ./gradlew check
 
 docker-build:
 	docker build -t leonpatmore2/spring-boot-faas .
