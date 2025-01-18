@@ -4,19 +4,31 @@ orbs:
   docker: circleci/docker@2.8.1
 
 executors:
+  java-executor:
+    docker:
+      - image: cimg/openjdk:21.0.5
   python-executor:
     docker:
       - image: cimg/python:3.12
 
 jobs:
-  run-tests:
-    executor: python-executor
+  run-core-tests:
+    executor: java-executor
     steps:
       - checkout
       - setup_remote_docker
       - run:
           name: Test core
           command: make test-core
+
+  run-functional-tests:
+    executor: python-executor
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Test functional
+          command: make test-functional
 
   build-and-push-docker-image:
     executor: docker/docker
@@ -36,4 +48,8 @@ workflows:
   ci:
     jobs:
       - run-tests
-      - build-and-push-docker-image
+      - run-functional-tests
+      - build-and-push-docker-image:
+          requires:
+              - run-tests
+              - run-functional-tests
