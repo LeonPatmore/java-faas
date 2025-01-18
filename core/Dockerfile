@@ -4,10 +4,11 @@ WORKDIR /app
 
 COPY gradle gradle
 COPY gradlew .
-RUN chmod +x gradlew
 COPY gradlew.bat .
 COPY build.gradle.kts .
 COPY settings.gradle.kts .
+RUN chmod +x gradlew
+
 COPY common common
 COPY core core
 COPY web web

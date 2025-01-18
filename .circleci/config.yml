@@ -27,9 +27,6 @@ jobs:
       - checkout
       - setup_remote_docker
       - run:
-          name: Build Core
-          command: cd core && make build
-      - run:
           name: Build
           command: cd example && make build
       - persist_to_workspace:

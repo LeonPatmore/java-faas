@@ -10,8 +10,8 @@ plugins {
 }
 
 allprojects {
-    group = "com.leonpatmore"
-    version = "0.0.1-SNAPSHOT"
+    group = "com.leonpatmore.faas"
+    version = System.getenv("FAAS_VERSION") ?: "0.0.1-SNAPSHOT"
 
     repositories {
         mavenCentral()
