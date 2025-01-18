@@ -28,7 +28,7 @@ class DockerFaasRunner(FaasRunner):
                                                       volumes=self.volumes,
                                                       ports={'8080/tcp': 8080},
                                                       detach=True,
-                                                      remove=True,
+                                                      remove=False,
                                                       network=self.network_name)
 
         container.reload()
