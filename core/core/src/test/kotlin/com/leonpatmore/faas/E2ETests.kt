@@ -20,6 +20,7 @@ import kotlin.time.toJavaDuration
         "functions.test.handler=stringTestHandler",
         "functions.test.target.factory=testEventTargetFactory",
     ],
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 )
 @ContextConfiguration(
     classes = [
@@ -36,7 +37,7 @@ class E2ETests {
     private lateinit var testEventTarget: EventTarget
 
     @Test
-    fun name() {
+    fun `test event source and event target`() {
         testEventSource.produce() shouldBe "res"
 
         await().atMost(10.seconds.toJavaDuration()).untilAsserted {

@@ -2,9 +2,8 @@ import os
 
 from docker import DockerClient
 
+from docker_utils import wait_for_container_to_be_healthy
 from faas_runner import FaasRunner
-
-FILE_PATH = os.path.abspath(__file__)
 
 
 class FaasInstance:
@@ -15,13 +14,14 @@ class FaasInstance:
 
 class DockerFaasRunner(FaasRunner):
 
-    def __init__(self, docker_client: DockerClient, network_name: str, image_tag: str):
+    def __init__(self, docker_client: DockerClient, network_name: str, image_tag: str, handler_jar_path: str):
         self.docker_client = docker_client
         self.network_name = network_name
         self.image_name = f"leonpatmore2/spring-boot-faas:{image_tag}"
+        self.handler_jar_path = handler_jar_path
 
     def run(self, envs: dict):
-        volumes = [f"{FILE_PATH}/../../example/build/libs/example-0.0.1-SNAPSHOT-plain.jar:/app/handler/handler.jar"]
+        volumes = [f"{self.handler_jar_path}:/app/handler/handler.jar"]
         container = self.docker_client.containers.run(self.image_name,
                                                       environment=envs,
                                                       volumes=volumes,
@@ -29,4 +29,7 @@ class DockerFaasRunner(FaasRunner):
                                                       detach=True,
                                                       remove=True,
                                                       network=self.network_name)
+
+        container.reload()
+        wait_for_container_to_be_healthy(container)
         return container

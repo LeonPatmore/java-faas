@@ -21,6 +21,19 @@ jobs:
           name: Test
           command: cd core && make test
 
+  build-example:
+    executor: java-executor
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Test
+          command: cd example && make build
+      - persist_to_workspace:
+          root: example/build/libs
+          paths:
+            - example-0.0.1-SNAPSHOT-plain.jar
+
   run-functional-tests:
     executor: python-executor
     steps:
@@ -37,9 +50,13 @@ jobs:
       - run:
           name: Lint
           command: cd tests && make lint
+      - attach_workspace:
+          at: /tmp/workspace
       - run:
           name: Run Tests
           command: cd tests && make run
+          environment:
+            HANDLER_PATH: /tmp/workspace/example-0.0.1-SNAPSHOT-plain.jar
       - docker/push:
           image: leonpatmore2/spring-boot-faas
 

@@ -1,6 +1,5 @@
 import logging
 import os
-from time import sleep
 
 import docker
 import pytest
@@ -10,6 +9,8 @@ from faas_runner_docker import DockerFaasRunner
 from sqs.sqs_message_consumer import DockerSqsMessageConsumer, SqsMessageConsumer
 from sqs.sqs_message_producer import DockerSqsMessageProducer, SqsMessageProducer
 from sqs.sqs_runner import SqsRunner
+
+FILE_PATH = os.path.abspath(__file__)
 
 
 @pytest.fixture(scope="session")
@@ -58,8 +59,15 @@ def faas_image_tag():
 
 
 @pytest.fixture(scope="session")
-def faas_runner(docker_client, network_name, faas_image_tag):
-    return DockerFaasRunner(docker_client, network_name, faas_image_tag)
+def faas_handler_jar_path():
+    path = os.getenv("HANDLER_PATH", f"{FILE_PATH}/../../example/build/libs/example-0.0.1-SNAPSHOT-plain.jar")
+    logging.info(f"Using faas handler jar path [ {path} ]")
+    return path
+
+
+@pytest.fixture(scope="session")
+def faas_runner(docker_client, network_name, faas_image_tag, faas_handler_jar_path):
+    return DockerFaasRunner(docker_client, network_name, faas_image_tag, faas_handler_jar_path)
 
 
 @pytest.fixture
@@ -79,8 +87,7 @@ def run_instance(sqs, faas_runner, target_sqs_queue):
     container.stop()
 
 
-def test_something(run_instance, sqs_message_producer, sqs_target_message_consumer):
-    sleep(5)  # TODO: Improve this to wait for application to be healthy.
+def test_sqs_to_sqs(run_instance, sqs_message_producer, sqs_target_message_consumer):
     sqs_message_producer.produce("{\"firstName\":\"Leon\",\"lastName\":\"Patmore\"}", "testQueue")
     messages = sqs_target_message_consumer.get_messages()
     assert len(messages) == 1
