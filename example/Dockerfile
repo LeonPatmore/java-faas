@@ -19,7 +19,8 @@ RUN chmod +x gradlew
 COPY src src
 RUN ./gradlew clean build -x test
 
-FROM amazoncorretto:21-alpine
+ARG BASE_IMAGE_TAG=latest
+FROM leonpatmore2/spring-boot-faas:BASE_IMAGE_TAG
 WORKDIR /app
 COPY --from=build /app/build/libs/*.jar /app/handler/handler.jar
 

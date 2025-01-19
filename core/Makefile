@@ -6,3 +6,6 @@ test:
 
 docker-build:
 	docker build -t leonpatmore2/spring-boot-faas .
+
+save-image:
+	docker image save leonpatmore2/spring-boot-faas:$(imageTag) -o spring-boot-faas.tar

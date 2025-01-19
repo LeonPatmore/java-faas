@@ -20,15 +20,35 @@ jobs:
       - run:
           name: Test
           command: cd core && make test
-
-  build-example:
+  
+  build-core-docker:
     executor: java-executor
     steps:
       - checkout
-      - setup_remote_docker
+      - docker/build:
+          image: leonpatmore2/spring-boot-faas
+          path: core
+          docker-context: core
+      - run:
+          name: Save Image
+          command: cd core && make save-image imageTag=${CIRCLE_SHA1}
+      - persist_to_workspace:
+          root: core
+          paths:
+            - spring-boot-faas.tar
+
+  build-example-docker:
+    executor: java-executor
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /tmp/workspace
+      - run:
+          name: Load Faas Example Image
+          command: docker load --input /tmp/workspace/spring-boot-faas.tar
       - run:
           name: Build
-          command: cd example && make build-docker githubUser=${GITHUB_USER} githubToken=${GITHUB_TOKEN}
+          command: cd example && make build-docker githubUser=${GITHUB_USER} githubToken=${GITHUB_TOKEN} baseImageTag=${CIRCLE_SHA1}
       - run:
           name: Save Image
           command: cd example && make save-image
@@ -42,11 +62,6 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
-      - docker/check
-      - docker/build:
-          image: leonpatmore2/spring-boot-faas
-          path: core
-          docker-context: core
       - run:
           name: Setup
           command: cd tests && make install
@@ -64,12 +79,11 @@ jobs:
           environment:
             FAAS_IMAGE_NAME: faas-example:latest
             HANDLER_PATH: ''
-      - docker/push:
-          image: leonpatmore2/spring-boot-faas
 
   push-docker-image:
     executor: docker/docker
     steps:
+      - docker/check
       - docker/push:
           image: leonpatmore2/spring-boot-faas
 
@@ -77,11 +91,14 @@ workflows:
   version: 2
   ci:
     jobs:
-      - build-example
       - run-core-tests
+      - build-core-docker
+      - build-example-docker:
+          requires:
+            - build-core-docker
       - run-functional-tests:
           requires:
-            - build-example
+            - build-example-docker
       - push-docker-image:
           requires:
               - run-core-tests
