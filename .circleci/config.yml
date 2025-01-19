@@ -87,6 +87,11 @@ jobs:
     steps:
       - setup_remote_docker
       - docker/check
+      - attach_workspace:
+          at: /tmp/workspace
+      - run:
+          name: Load Spring Boot Faas Image
+          command: docker load --input /tmp/workspace/spring-boot-faas.tar
       - docker/push:
           image: leonpatmore2/spring-boot-faas
 
