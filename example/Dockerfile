@@ -1,4 +1,14 @@
+ARG BASE_IMAGE_TAG=latest
+
 FROM amazoncorretto:21-alpine AS build
+
+ARG GITHUB_USER
+RUN test -n "$GITHUB_USER" || (echo "GITHUB_USER  not set" && false)
+ARG GITHUB_TOKEN
+RUN test -n "$GITHUB_TOKEN" || (echo "GITHUB_TOKEN  not set" && false)
+
+ENV GITHUB_USER=${GITHUB_USER}
+ENV GITHUB_TOKEN=${GITHUB_TOKEN}
 
 WORKDIR /app
 
@@ -6,18 +16,14 @@ COPY gradle gradle
 COPY gradlew .
 COPY gradlew.bat .
 COPY build.gradle.kts .
-COPY settings.gradle.kts .
 RUN chmod +x gradlew
 
-COPY common common
-COPY core core
-COPY web web
-COPY sqs sqs
+COPY src src
 RUN ./gradlew clean build -x test
 
-FROM amazoncorretto:21-alpine
+FROM leonpatmore2/spring-boot-faas:${BASE_IMAGE_TAG}
 WORKDIR /app
-COPY --from=build /app/core/build/libs/*.jar core.jar
+COPY --from=build /app/build/libs/*.jar /app/handler/handler.jar
 
 HEALTHCHECK --interval=20s --timeout=3s --start-period=3s --retries=3 \
   CMD wget -T5 -qO- http://localhost:8080/actuator/health | grep UP || exit 1

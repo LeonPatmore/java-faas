@@ -12,6 +12,13 @@ version = "0.0.1-SNAPSHOT"
 
 repositories {
     mavenCentral()
+    maven {
+        url = uri("https://maven.pkg.github.com/LeonPatmore/spring-boot-faas")
+        credentials {
+            username = System.getenv("GITHUB_USER")
+            password = System.getenv("GITHUB_TOKEN")
+        }
+    }
 }
 
 java {
@@ -23,12 +30,12 @@ java {
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
-    compileOnly(files("../core/common/build/libs/common-0.0.1-SNAPSHOT-plain.jar"))
+    compileOnly("com.leonpatmore.faas:common:0.0.1")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    testImplementation(files("../core/common/build/libs/common-0.0.1-SNAPSHOT-plain.jar"))
+    testImplementation("com.leonpatmore.faas:common:0.0.1")
 }
 
 tasks.getByName("bootJar") {
