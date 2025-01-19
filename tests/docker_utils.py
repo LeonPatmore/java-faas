@@ -15,7 +15,9 @@ def create_network(client: DockerClient, name: str):
             raise e
 
 
-def wait_for_container_to_be_healthy(container: Container, max_wait: timedelta = timedelta(seconds=15)):
+def wait_for_container_to_be_healthy(client: DockerClient,
+                                     container: Container,
+                                     max_wait: timedelta = timedelta(seconds=15)):
     container_name = container.name
     start_time = datetime.now()
     end_time = start_time + max_wait
@@ -27,9 +29,16 @@ def wait_for_container_to_be_healthy(container: Container, max_wait: timedelta =
             return
         elif health_status != "starting" and health_status != "unknown":
             logging.error(f"Container '{container_name}' health status: {health_status}")
-            logging.info(container.logs())
+            debug_container(client, container)
             raise RuntimeError(f"Container '{container_name}' health status: {health_status}")
         logging.info(f"Waiting for container '{container_name}' to be healthy. Current status: {health_status}")
         time.sleep(1)
-    logging.info(container.logs())
+    debug_container(client, container)
     raise TimeoutError(f"Timeout waiting for container '{container_name}' to become healthy.")
+
+
+def debug_container(client: DockerClient, container: Container):
+    logging.info("Container logs:")
+    logging.info(container.logs())
+    logging.info("Container inspection:")
+    logging.info(client.api.inspect_container(container.id))

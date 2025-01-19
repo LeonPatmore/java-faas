@@ -32,5 +32,5 @@ class DockerFaasRunner(FaasRunner):
                                                       network=self.network_name)
 
         container.reload()
-        wait_for_container_to_be_healthy(container)
+        wait_for_container_to_be_healthy(self.docker_client, container)
         return container
