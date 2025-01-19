@@ -25,6 +25,7 @@ jobs:
     executor: java-executor
     steps:
       - checkout
+      - setup_remote_docker
       - docker/build:
           image: leonpatmore2/spring-boot-faas
           path: core
@@ -41,6 +42,7 @@ jobs:
     executor: java-executor
     steps:
       - checkout
+      - setup_remote_docker
       - attach_workspace:
           at: /tmp/workspace
       - run:
@@ -83,6 +85,7 @@ jobs:
   push-docker-image:
     executor: docker/docker
     steps:
+      - setup_remote_docker
       - docker/check
       - docker/push:
           image: leonpatmore2/spring-boot-faas
