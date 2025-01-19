@@ -46,7 +46,7 @@ jobs:
       - attach_workspace:
           at: /tmp/workspace
       - run:
-          name: Load Faas Example Image
+          name: Load Spring Boot Faas Image
           command: docker load --input /tmp/workspace/spring-boot-faas.tar
       - run:
           name: Build
