@@ -31,4 +31,5 @@ def wait_for_container_to_be_healthy(container: Container, max_wait: timedelta =
             raise RuntimeError(f"Container '{container_name}' health status: {health_status}")
         logging.info(f"Waiting for container '{container_name}' to be healthy. Current status: {health_status}")
         time.sleep(1)
+    logging.info(container.logs())
     raise TimeoutError(f"Timeout waiting for container '{container_name}' to become healthy.")
